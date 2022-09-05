@@ -1,0 +1,9 @@
+name: github-issues-automation
+description: Automate github issues
+
+runs:
+  using: composite
+  steps:
+  - run: go run main.go
+    shell: bash
+    
