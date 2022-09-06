@@ -24,7 +24,7 @@ func main() {
 		logs.Debug("organization: %s\n", organization)
 
 		projectNumber := os.Getenv("PROJECT_NUMBER")
-		logs.Debug("project url: %s\n", projectNumber)
+		logs.Debug("project number: %s\n", projectNumber)
 
 		targetStatus := os.Getenv("TARGET_STATUS")
 		logs.Debug("target-status: %s\n", targetStatus)

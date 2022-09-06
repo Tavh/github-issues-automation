@@ -8,7 +8,7 @@ inputs:
 
   organization:
     required: false
-    description: The github organization (Required only if the project URL is present)
+    description: The github organization (Required only if the project number is present)
 
   issue-action:
     required: false
@@ -17,7 +17,7 @@ inputs:
 
   project-number:
     required: false
-    description: The github project url (If the issue is part of a project)
+    description: The github project number (If the issue is part of a project)
 
   target-status:
     required: false
