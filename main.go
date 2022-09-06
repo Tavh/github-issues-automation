@@ -3,14 +3,12 @@ package main
 import (
 	"os"
 
-	"github.com/machinebox/graphql"
 	"github.com/pkg/errors"
 	"github.com/tavh/github-issues-automation/internal/issues"
 	"github.com/tavh/github-issues-automation/internal/logs"
 )
 
 var ISSUES_EVENT_NAME = "issues"
-var GITHUB_GRAPHQL_ENDPOINT = "https://api.github.com/graphql"
 
 func main() {
 	logs.Init()
@@ -37,10 +35,7 @@ func main() {
 		}
 		logs.Debug("issue id: %s\n", issueNodeId)
 
-		client := issues.IssuesClient{
-			GQLClient: graphql.NewClient(GITHUB_GRAPHQL_ENDPOINT),
-		}
-
+		client := issues.NewIssuesClient()
 		client.Execute(projectUrl, issueAction, constructIssueFieldsToNewValues(targetStatus), issueNodeId)
 	} else {
 		logs.Error(errors.Errorf("Action triggered from invalid event, only supports events of type '%s'\n", ISSUES_EVENT_NAME))
