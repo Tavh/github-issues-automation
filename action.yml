@@ -6,7 +6,7 @@ inputs:
     required: true
     description: Github token with permissions to modify projects
 
-  action:
+  issue-action:
     required: false
     description: The type of action you would like to perform (update, delete, archive, create)
     default: update
@@ -32,7 +32,7 @@ runs:
         GITHUB_TOKEN: ${{ inputs.github-token }}
         PROJECT_URL: ${{ inputs.project-url }}
         TARGET_STATUS: ${{ inputs.target-status }}
-        ACTION: ${{ inputs.action }}
+        ISSUE_ACTION: ${{ inputs.issue-action }}
         DEBUG: ${{ inputs.debug }}
       shell: bash
       run: 

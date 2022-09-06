@@ -26,8 +26,8 @@ func main() {
 		targetStatus := os.Getenv("TARGET_STATUS")
 		logs.Debug("target-status: %s\n", targetStatus)
 
-		action := os.Getenv("ACTION")
-		logs.Debug("action: %s\n", action)
+		issueAction := os.Getenv("ISSUE_ACTION")
+		logs.Debug("issue action: %s\n", issueAction)
 
 		issueNodeId, err := GetIssueNodeId()
 		if err != nil {
@@ -35,7 +35,7 @@ func main() {
 		}
 		logs.Debug("issue id: %s\n", issueNodeId)
 
-		issues.Execute(githubToken, projectUrl, action, constructIssueFieldsToNewValues(targetStatus), issueNodeId)
+		issues.Execute(githubToken, projectUrl, issueAction, constructIssueFieldsToNewValues(targetStatus), issueNodeId)
 	} else {
 		logs.Error(errors.Errorf("Action triggered from invalid event, only supports events of type '%s'\n", ISSUES_EVENT_NAME))
 	}
