@@ -25,4 +25,3 @@ runs:
       shell: bash
       run: 
         go build && ./github-issues-automation
-#    
