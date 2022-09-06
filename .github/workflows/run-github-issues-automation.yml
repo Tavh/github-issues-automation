@@ -20,3 +20,8 @@ jobs:
   
     - name: Github issues automation
       uses: tavh/github-issues-automation@v1
+      with:
+        github-token: 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
+        project-url: https://github.com/orgs/tav-test-org/projects/4
+        target-status: "In Progress"
+    
