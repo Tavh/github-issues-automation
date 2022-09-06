@@ -21,6 +21,8 @@ runs:
     GITHUB_TOKEN: ${{ inputs.github-token }}
     PROJECT_URL: ${{ inputs.project-url }}
     TARGET_STATUS: ${{ inputs.target-status }}
-  - run: go run main.go
+  - run: 
+      | go build |
+        ./github-issues-automation
     shell: bash
     
