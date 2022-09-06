@@ -24,5 +24,6 @@ runs:
         TARGET_STATUS: ${{ inputs.target-status }}
       shell: bash
       run: 
-        go build && github-issues-automation
+        go build | 
+        ./github-issues-automation
 #    
