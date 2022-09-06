@@ -17,12 +17,13 @@ inputs:
 runs:
   using: composite
   steps:
-  env:
-    GITHUB_TOKEN: ${{ inputs.github-token }}
-    PROJECT_URL: ${{ inputs.project-url }}
-    TARGET_STATUS: ${{ inputs.target-status }}
-  - run: 
-      go build |
-      ./github-issues-automation
-    shell: bash
+    - id: github-issues-automation
+      env:
+        GITHUB_TOKEN: ${{ inputs.github-token }}
+        PROJECT_URL: ${{ inputs.project-url }}
+        TARGET_STATUS: ${{ inputs.target-status }}
+      shell: bash
+      run: 
+        go build |
+        ./github-issues-automation
     
