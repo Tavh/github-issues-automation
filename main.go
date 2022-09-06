@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"os"
 
 	"github.com/pkg/errors"
@@ -18,5 +17,5 @@ func main() {
 	if err != nil {
 		logs.Error(errors.Wrap(err, "Failed to extract issue id"))
 	}
-	fmt.Printf("issue id: %s\n", issueNodeId)
+	logs.Debug("issue id: %s\n", issueNodeId)
 }
