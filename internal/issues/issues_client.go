@@ -15,11 +15,12 @@ type IssuesClient interface {
 type issuesClient struct {
 	gqlClient     *graphql.Client
 	ctx           context.Context
+	token         string
 	organization  string
 	projectNumber string
 }
 
-func NewIssuesClient(organization string, projectNumber string) IssuesClient {
+func NewIssuesClient(token string, organization string, projectNumber string) IssuesClient {
 	return &issuesClient{
 		gqlClient:     graphql.NewClient(GITHUB_GRAPHQL_ENDPOINT),
 		ctx:           context.Background(),
