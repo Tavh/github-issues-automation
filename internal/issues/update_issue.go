@@ -72,6 +72,8 @@ func (issuesClient *issuesClient) updateItemLevelField(field Field, fieldNewValu
 	req.Var("projectNumber", issuesClient.projectNumber)
 
 	var res map[string]any
+
+	logs.Debug("gql request: %v", req)
 	issuesClient.gqlClient.Run(issuesClient.ctx, req, &res)
 
 	logs.Debug("gql response: %v", res)
