@@ -14,6 +14,7 @@ func main() {
 	fmt.Printf("github token: %s\n", githubToken)
 	fmt.Printf("event name: %s\n", eventName)
 	payload := getIssuesEvent()
+	fmt.Printf("event payload: %v\n", payload)
 	issueNodeId, err := getIssueNodeId(payload)
 	if err != nil {
 		log.Printf("[ERROR] %+v\n", errors.Wrap(err, "Failed to extract issue id"))
