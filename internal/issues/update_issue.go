@@ -1,34 +1,78 @@
 package issues
 
 import (
+	"github.com/machinebox/graphql"
 	"github.com/pkg/errors"
+
 	"github.com/tavh/github-issues-automation/internal/logs"
 )
 
-type IssueField string
+type Field string
 
 const (
-	Status IssueField = "status"
+	Status Field = "status"
+	Label  Field = "label"
 )
 
-func executeUpdate(githubToken string, projectUrl string, issueFieldsToNewValues map[IssueField]any, issueNodeId string) {
-	err := validateFields(issueFieldsToNewValues)
-	if validateFields(issueFieldsToNewValues) != nil {
-		logs.Error(err)
-		return
-	}
-}
+func (issuesClient *issuesClient) executeUpdate(fieldToNewValue map[Field]any, issueNodeId string) error {
+	anyIssueLevelFieldsPresent := issuesClient.handleIssueLevelFieldsIfPresent(fieldToNewValue, issueNodeId)
+	anyItemLevelFieldsPresent := issuesClient.handleItemLevelFieldsIfPresent(fieldToNewValue, issueNodeId)
 
-func validateFields(issueFieldsToNewValues map[IssueField]any) error {
-	isAnyFieldValuePresent := false
-
-	if issueFieldsToNewValues[Status] != nil {
-		isAnyFieldValuePresent = true
-	}
-
-	if !isAnyFieldValuePresent {
+	if !anyIssueLevelFieldsPresent && !anyItemLevelFieldsPresent {
 		return errors.Errorf("Action %s was requested but no new field values were provided\n", Update)
 	}
 
 	return nil
+}
+
+func (issuesClient *issuesClient) handleItemLevelFieldsIfPresent(fieldToNewValue map[Field]any, issueNodeId string) bool {
+	isAnyFieldValuePresent := false
+
+	statusValue := fieldToNewValue[Status]
+	if statusValue != nil {
+		isAnyFieldValuePresent = true
+		issuesClient.updateItemLevelField(Status, statusValue, issueNodeId)
+	}
+
+	return isAnyFieldValuePresent
+}
+
+func (issuesClient *issuesClient) handleIssueLevelFieldsIfPresent(fieldToNewValue map[Field]any, issueNodeId string) bool {
+	isAnyFieldValuePresent := false
+
+	if fieldToNewValue[Label] != nil {
+		isAnyFieldValuePresent = true
+	}
+
+	return isAnyFieldValuePresent
+}
+
+func (issuesClient *issuesClient) updateItemLevelField(field Field, fieldNewValue any, issueNodeId string) {
+	req := graphql.NewRequest(
+		`query($organization: String!, $projectNumber: Int!) {
+			organization(login: $organization){
+				projectV2(number: $projectNumber) {
+					id
+					fields(first:100) {
+					nodes {
+						... on ProjectV2SingleSelectField {
+							id
+							name                        
+							options {
+								id
+								name
+							}
+						}
+					}
+				}
+			}
+		}`,
+	)
+	req.Var("organization", issuesClient.organization)
+	req.Var("projectNumber", issuesClient.projectNumber)
+
+	var res map[string]any
+	issuesClient.gqlClient.Run(issuesClient.ctx, req, &res)
+
+	logs.Debug("gql response: %v", res)
 }

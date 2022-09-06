@@ -20,6 +20,7 @@ jobs:
       uses: tavh/github-issues-automation@v1
       with:
         github-token: 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
+        organization: tav-test-org
         project-number: 4
         target-status: "In Progress"
         organization: tav-test-org

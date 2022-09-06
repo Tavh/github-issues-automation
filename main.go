@@ -20,14 +20,17 @@ func main() {
 		githubToken := os.Getenv("GITHUB_TOKEN")
 		logs.Debug("github token: %s\n", githubToken)
 
-		projectUrl := os.Getenv("PROJECT_URL")
-		logs.Debug("project url: %s\n", projectUrl)
+		organization := os.Getenv("ORGANIZATION")
+		logs.Debug("organization: %s\n", organization)
+
+		projectNumber := os.Getenv("PROJECT_NUMBER")
+		logs.Debug("project url: %s\n", projectNumber)
 
 		targetStatus := os.Getenv("TARGET_STATUS")
 		logs.Debug("target-status: %s\n", targetStatus)
 
-		action := os.Getenv("ACTION")
-		logs.Debug("action: %s\n", action)
+		issueAction := os.Getenv("ISSUE_ACTION")
+		logs.Debug("issue action: %s\n", issueAction)
 
 		issueNodeId, err := GetIssueNodeId()
 		if err != nil {
@@ -35,14 +38,15 @@ func main() {
 		}
 		logs.Debug("issue id: %s\n", issueNodeId)
 
-		issues.Execute(githubToken, projectUrl, action, constructIssueFieldsToNewValues(targetStatus), issueNodeId)
+		client := issues.NewIssuesClient(organization, projectNumber)
+		client.Execute(issueAction, constructFieldToNewValueMap(targetStatus), issueNodeId)
 	} else {
 		logs.Error(errors.Errorf("Action triggered from invalid event, only supports events of type '%s'\n", ISSUES_EVENT_NAME))
 	}
 }
 
-func constructIssueFieldsToNewValues(status string) map[issues.IssueField]any {
-	return map[issues.IssueField]any{
+func constructFieldToNewValueMap(status string) map[issues.Field]any {
+	return map[issues.Field]any{
 		issues.Status: status,
 	}
 }
