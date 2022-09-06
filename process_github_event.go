@@ -37,6 +37,8 @@ func getIssuesEvent() github.IssuesEvent {
 }
 
 func getIssueNodeId(event github.IssuesEvent) (string, error) {
+	issue := event.GetIssue()
+	fmt.Printf("issue: %s\n", issue)
 	issueNodeId := event.GetIssue().GetNodeID()
 
 	if issueNodeId == "" {
