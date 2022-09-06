@@ -1,7 +1,10 @@
 package issues
 
 import (
+	"github.com/machinebox/graphql"
 	"github.com/pkg/errors"
+
+	"github.com/tavh/github-issues-automation/internal/logs"
 )
 
 type Field string
@@ -11,9 +14,9 @@ const (
 	Label  Field = "label"
 )
 
-func (issuesClient *issuesClient) executeUpdate(projectUrl string, fieldToNewValue map[Field]any, issueNodeId string) error {
-	anyIssueLevelFieldsPresent := handleIssueLevelFieldsIfPresent(fieldToNewValue)
-	anyItemLevelFieldsPresent := handleItemLevelFieldsIfPresent(fieldToNewValue)
+func (issuesClient *issuesClient) executeUpdate(fieldToNewValue map[Field]any, issueNodeId string) error {
+	anyIssueLevelFieldsPresent := issuesClient.handleIssueLevelFieldsIfPresent(fieldToNewValue, issueNodeId)
+	anyItemLevelFieldsPresent := issuesClient.handleItemLevelFieldsIfPresent(fieldToNewValue, issueNodeId)
 
 	if !anyIssueLevelFieldsPresent && !anyItemLevelFieldsPresent {
 		return errors.Errorf("Action %s was requested but no new field values were provided\n", Update)
@@ -22,17 +25,19 @@ func (issuesClient *issuesClient) executeUpdate(projectUrl string, fieldToNewVal
 	return nil
 }
 
-func handleItemLevelFieldsIfPresent(fieldToNewValue map[Field]any) bool {
+func (issuesClient *issuesClient) handleItemLevelFieldsIfPresent(fieldToNewValue map[Field]any, issueNodeId string) bool {
 	isAnyFieldValuePresent := false
 
-	if fieldToNewValue[Status] != nil {
+	statusValue := fieldToNewValue[Status]
+	if statusValue != nil {
 		isAnyFieldValuePresent = true
+		issuesClient.updateItemLevelField(Status, statusValue, issueNodeId)
 	}
 
 	return isAnyFieldValuePresent
 }
 
-func handleIssueLevelFieldsIfPresent(fieldToNewValue map[Field]any) bool {
+func (issuesClient *issuesClient) handleIssueLevelFieldsIfPresent(fieldToNewValue map[Field]any, issueNodeId string) bool {
 	isAnyFieldValuePresent := false
 
 	if fieldToNewValue[Label] != nil {
@@ -42,6 +47,32 @@ func handleIssueLevelFieldsIfPresent(fieldToNewValue map[Field]any) bool {
 	return isAnyFieldValuePresent
 }
 
-func updateItemLevelField(Field) {
-	// TODO: Implement actual update
+func (issuesClient *issuesClient) updateItemLevelField(field Field, fieldNewValue any, issueNodeId string) {
+	req := graphql.NewRequest(
+		`query($organization: String!, $projectNumber: Int!) {
+			organization(login: $organization){
+				projectV2(number: $projectNumber) {
+					id
+					fields(first:100) {
+					nodes {
+						... on ProjectV2SingleSelectField {
+							id
+							name                        
+							options {
+								id
+								name
+							}
+						}
+					}
+				}
+			}
+		}`,
+	)
+	req.Var("organization", issuesClient.organization)
+	req.Var("projectNumber", issuesClient.projectNumber)
+
+	var res map[string]any
+	issuesClient.gqlClient.Run(issuesClient.ctx, req, &res)
+
+	logs.Debug("gql response: %v", res)
 }

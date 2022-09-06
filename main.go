@@ -20,8 +20,11 @@ func main() {
 		githubToken := os.Getenv("GITHUB_TOKEN")
 		logs.Debug("github token: %s\n", githubToken)
 
-		projectUrl := os.Getenv("PROJECT_URL")
-		logs.Debug("project url: %s\n", projectUrl)
+		organization := os.Getenv("ORGANIZATION")
+		logs.Debug("organization: %s\n", organization)
+
+		projectNumber := os.Getenv("PROJECT_NUMBER")
+		logs.Debug("project url: %s\n", projectNumber)
 
 		targetStatus := os.Getenv("TARGET_STATUS")
 		logs.Debug("target-status: %s\n", targetStatus)
@@ -35,8 +38,8 @@ func main() {
 		}
 		logs.Debug("issue id: %s\n", issueNodeId)
 
-		client := issues.NewIssuesClient()
-		client.Execute(projectUrl, issueAction, constructFieldToNewValueMap(targetStatus), issueNodeId)
+		client := issues.NewIssuesClient(organization, projectNumber)
+		client.Execute(issueAction, constructFieldToNewValueMap(targetStatus), issueNodeId)
 	} else {
 		logs.Error(errors.Errorf("Action triggered from invalid event, only supports events of type '%s'\n", ISSUES_EVENT_NAME))
 	}

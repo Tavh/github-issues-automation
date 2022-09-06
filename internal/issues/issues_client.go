@@ -9,24 +9,28 @@ import (
 var GITHUB_GRAPHQL_ENDPOINT = "https://api.github.com/graphql"
 
 type IssuesClient interface {
-	Execute(projectUrl string, issueAction string, fieldToNewValue map[Field]any, issueNodeId string)
+	Execute(issueAction string, fieldToNewValue map[Field]any, issueNodeId string)
 }
 
 type issuesClient struct {
-	gqlClient *graphql.Client
-	ctx       context.Context
+	gqlClient     *graphql.Client
+	ctx           context.Context
+	organization  string
+	projectNumber string
 }
 
-func NewIssuesClient() IssuesClient {
+func NewIssuesClient(organization string, projectNumber string) IssuesClient {
 	return &issuesClient{
-		gqlClient: graphql.NewClient(GITHUB_GRAPHQL_ENDPOINT),
-		ctx:       context.Background(),
+		gqlClient:     graphql.NewClient(GITHUB_GRAPHQL_ENDPOINT),
+		ctx:           context.Background(),
+		organization:  organization,
+		projectNumber: projectNumber,
 	}
 }
 
-func (issuesClient *issuesClient) Execute(projectUrl string, issueAction string, fieldToNewValue map[Field]any, issueNodeId string) {
+func (issuesClient *issuesClient) Execute(issueAction string, fieldToNewValue map[Field]any, issueNodeId string) {
 	switch IssueAction(issueAction) {
 	case Update:
-		issuesClient.executeUpdate(projectUrl, fieldToNewValue, issueNodeId)
+		issuesClient.executeUpdate(fieldToNewValue, issueNodeId)
 	}
 }
