@@ -1,6 +1,9 @@
 package issues
 
 import (
+	"context"
+	"fmt"
+
 	"github.com/machinebox/graphql"
 	"github.com/pkg/errors"
 
@@ -68,15 +71,13 @@ func (issuesClient *issuesClient) updateItemLevelField(field Field, fieldNewValu
 			}
 		}`,
 	)
+
 	req.Var("organization", issuesClient.organization)
 	req.Var("projectNumber", issuesClient.projectNumber)
+	req.Header.Set("Authorization", fmt.Sprintf("Bearer %s", issuesClient.token))
 
-	req.Header.Add("Authorization", "Bearer "+issuesClient.token)
-
-	var res map[string]any
-
-	logs.Debug("gql request: %v", req)
-	err := issuesClient.gqlClient.Run(issuesClient.ctx, req, &res)
+	var res any
+	err := issuesClient.gqlClient.Run(context.Background(), req, &res)
 	if err != nil {
 		logs.Error(err)
 	}
