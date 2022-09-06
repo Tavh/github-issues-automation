@@ -2,22 +2,21 @@ package main
 
 import (
 	"fmt"
-	"log"
 	"os"
 
 	"github.com/pkg/errors"
+	"github.com/tavh/github-issues-automation/logs"
 )
 
 func main() {
 	githubToken := os.Getenv("GITHUB_TOKEN")
 	eventName := os.Getenv("GITHUB_EVENT_NAME")
-	fmt.Printf("github token: %s\n", githubToken)
-	fmt.Printf("event name: %s\n", eventName)
-	payload := getIssuesEvent()
-	fmt.Printf("event payload: %v\n", payload)
-	issueNodeId, err := getIssueNodeId(payload)
+	logs.Debug("github token: %s\n", githubToken)
+	logs.Debug("github event name: %s\n", eventName)
+	issueEvent := getIssuesEvent()
+	issueNodeId, err := getIssueNodeId(issueEvent)
 	if err != nil {
-		log.Printf("[ERROR] %+v\n", errors.Wrap(err, "Failed to extract issue id"))
+		logs.Error(errors.Wrap(err, "Failed to extract issue id"))
 	}
 	fmt.Printf("issue id: %s\n", issueNodeId)
 }

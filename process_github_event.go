@@ -2,44 +2,46 @@ package main
 
 import (
 	"encoding/json"
-	"fmt"
 	"io/ioutil"
-	"log"
 	"os"
 
 	"github.com/google/go-github/v47/github"
 	"github.com/pkg/errors"
+
+	"github.com/tavh/github-issues-automation/logs"
 )
 
 func getIssuesEvent() github.IssuesEvent {
+	logs.Debug("github event path: %s\n", os.Getenv("GITHUB_EVENT_PATH"))
+
 	var jsonFilePath string = os.Getenv("GITHUB_EVENT_PATH")
 
-	fmt.Printf("github event path: %s\n", os.Getenv("GITHUB_EVENT_PATH"))
 	jsonFile, err := os.Open(jsonFilePath)
 	if err != nil {
-		log.Printf("[ERROR] %+v\n", errors.Wrap(err, "Failed to open json"))
+		logs.Error(errors.Wrap(err, "Failed to open json"))
 	}
 	defer jsonFile.Close()
 
-	// read opened jsonFile as a byte array.
 	jsonByte, err := ioutil.ReadAll(jsonFile)
 	if err != nil {
-		log.Printf("[ERROR] %+v\n", errors.Wrap(err, "Failed to read json as a byte array"))
+		logs.Error(errors.Wrap(err, "Failed to read json as a byte array"))
 	}
 
-	payload := github.IssuesEvent{}
-	err = json.Unmarshal(jsonByte, &payload)
+	issueEvent := github.IssuesEvent{}
+	err = json.Unmarshal(jsonByte, &issueEvent)
 	if err != nil {
-		log.Printf("[ERROR] %+v\n", errors.Wrap(err, "Failed to unmarshal JSON to Go Object"))
+		logs.Error(errors.Wrap(err, "Failed to unmarshal JSON to Go Object"))
 	}
 
-	return payload
+	logs.Debug("github issue event: %v\n", issueEvent)
+	return issueEvent
 }
 
-func getIssueNodeId(event github.IssuesEvent) (string, error) {
-	issue := event.GetIssue()
-	fmt.Printf("issue: %s\n", issue)
-	issueNodeId := event.GetIssue().GetNodeID()
+func getIssueNodeId(issueEvent github.IssuesEvent) (string, error) {
+	issue := issueEvent.GetIssue()
+	logs.Debug("issue: %s\n", issue)
+	issueNodeId := issueEvent.GetIssue().GetNodeID()
+	logs.Debug("issue nodeId: %s\n", issueNodeId)
 
 	if issueNodeId == "" {
 		return "", errors.New("Issue ID is \"\". Failed to get issue id properly")
