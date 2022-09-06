@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/json"
+	"fmt"
 	"io/ioutil"
 	"log"
 	"os"
@@ -13,6 +14,7 @@ import (
 func getIssuesEvent() github.IssuesEvent {
 	var jsonFilePath string = os.Getenv("GITHUB_EVENT_PATH")
 
+	fmt.Printf("github event path: %s\n", os.Getenv("GITHUB_EVENT_PATH"))
 	jsonFile, err := os.Open(jsonFilePath)
 	if err != nil {
 		log.Printf("[ERROR] %+v\n", errors.Wrap(err, "Failed to open json"))
