@@ -36,9 +36,9 @@ func main() {
 		logs.Debug("issue id: %s\n", issueNodeId)
 
 		issues.Execute(githubToken, projectUrl, action, constructIssueFieldsToNewValues(targetStatus), issueNodeId)
+	} else {
+		logs.Error(errors.Errorf("Action triggered from invalid event, only supports events of type '%s'\n", ISSUES_EVENT_NAME))
 	}
-
-	logs.Error(errors.Errorf("Action triggered from invalid event, only supports events of type '%s'\n", ISSUES_EVENT_NAME))
 }
 
 func constructIssueFieldsToNewValues(status string) map[issues.IssueField]any {
