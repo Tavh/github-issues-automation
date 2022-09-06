@@ -6,6 +6,11 @@ inputs:
     required: true
     description: Github token with permissions to modify projects
 
+  action:
+    required: false
+    description: The type of action you would like to perform (update, delete, archive, create)
+    default: update
+
   project-url:
     required: false
     description: The github project url (If the issue is part of a project)
@@ -13,6 +18,11 @@ inputs:
   target-status:
     required: false
     description: The target status of the issue (Requires the issue to be part of a project)
+
+  debug:
+    required: false
+    description: Sets debug logs on or off (true or false)
+    default: "false"
 
 runs:
   using: composite
@@ -22,6 +32,8 @@ runs:
         GITHUB_TOKEN: ${{ inputs.github-token }}
         PROJECT_URL: ${{ inputs.project-url }}
         TARGET_STATUS: ${{ inputs.target-status }}
+        ACTION: ${{ inputs.action }}
+        DEBUG: ${{ inputs.debug }}
       shell: bash
       run: 
         go build && ./github-issues-automation

@@ -8,8 +8,25 @@ import (
 	"github.com/google/go-github/v47/github"
 	"github.com/pkg/errors"
 
-	"github.com/tavh/github-issues-automation/logs"
+	"github.com/tavh/github-issues-automation/internal/logs"
 )
+
+func GetIssueNodeId() (string, error) {
+	return getIssueNodeId(getIssuesEvent())
+}
+
+func getIssueNodeId(issueEvent github.IssuesEvent) (string, error) {
+	issue := issueEvent.GetIssue()
+	logs.Debug("issue: %s\n", issue)
+	issueNodeId := issueEvent.GetIssue().GetNodeID()
+	logs.Debug("issue nodeId: %s\n", issueNodeId)
+
+	if issueNodeId == "" {
+		return "", errors.New("Issue ID is \"\". Failed to get issue id properly")
+	}
+
+	return issueNodeId, nil
+}
 
 func getIssuesEvent() github.IssuesEvent {
 	logs.Debug("github event path: %s\n", os.Getenv("GITHUB_EVENT_PATH"))
@@ -35,17 +52,4 @@ func getIssuesEvent() github.IssuesEvent {
 
 	logs.Debug("github issue event: %v\n", issueEvent)
 	return issueEvent
-}
-
-func getIssueNodeId(issueEvent github.IssuesEvent) (string, error) {
-	issue := issueEvent.GetIssue()
-	logs.Debug("issue: %s\n", issue)
-	issueNodeId := issueEvent.GetIssue().GetNodeID()
-	logs.Debug("issue nodeId: %s\n", issueNodeId)
-
-	if issueNodeId == "" {
-		return "", errors.New("Issue ID is \"\". Failed to get issue id properly")
-	}
-
-	return issueNodeId, nil
 }
