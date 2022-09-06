@@ -1,9 +1,26 @@
 name: github-issues-automation
 description: Automate github issues
 
+inputs:
+  github-token:
+    required: true
+    description: Github token with permissions to modify projects
+
+  project-url:
+    required: false
+    description: The github project url (If the issue is part of a project)
+
+  target-status:
+    required: false
+    description: The target status of the issue (Requires the issue to be part of a project)
+
 runs:
   using: composite
   steps:
+  env:
+    GITHUB_TOKEN: ${{ inputs.github-token }}
+    PROJECT_URL: ${{ inputs.project-url }}
+    TARGET_STATUS: ${{ inputs.target-status }}
   - run: go run main.go
     shell: bash
     
