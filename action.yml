@@ -15,7 +15,7 @@ inputs:
     description: The type of action you would like to perform (update, delete, archive, create)
     default: update
 
-  project-url:
+  project-number:
     required: false
     description: The github project url (If the issue is part of a project)
 
