@@ -38,7 +38,7 @@ func main() {
 		}
 		logs.Debug("issue id: %s\n", issueNodeId)
 
-		client := issues.NewIssuesClient(organization, projectNumber)
+		client := issues.NewIssuesClient(githubToken, organization, projectNumber)
 		client.Execute(issueAction, constructFieldToNewValueMap(targetStatus), issueNodeId)
 	} else {
 		logs.Error(errors.Errorf("Action triggered from invalid event, only supports events of type '%s'\n", ISSUES_EVENT_NAME))

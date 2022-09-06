@@ -1,6 +1,8 @@
 package issues
 
 import (
+	"fmt"
+
 	"github.com/machinebox/graphql"
 	"github.com/pkg/errors"
 
@@ -70,6 +72,8 @@ func (issuesClient *issuesClient) updateItemLevelField(field Field, fieldNewValu
 	)
 	req.Var("organization", issuesClient.organization)
 	req.Var("projectNumber", issuesClient.projectNumber)
+
+	req.Header.Add("Authorization", fmt.Sprintf("Bearer %s", issuesClient.token))
 
 	var res map[string]any
 
