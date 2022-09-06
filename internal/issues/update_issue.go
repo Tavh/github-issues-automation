@@ -49,7 +49,7 @@ func (issuesClient *issuesClient) handleIssueLevelFieldsIfPresent(fieldToNewValu
 
 func (issuesClient *issuesClient) updateItemLevelField(field Field, fieldNewValue any, issueNodeId string) {
 	req := graphql.NewRequest(
-		`query($organization: String!, $projectNumber: Int!) {
+		`mutation($organization: String!, $projectNumber: Int!) {
 			organization(login: $organization){
 				projectV2(number: $projectNumber) {
 					id
