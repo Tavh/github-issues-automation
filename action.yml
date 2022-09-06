@@ -35,7 +35,7 @@ runs:
       env:
         GITHUB_TOKEN: ${{ inputs.github-token }}
         ORGANIZATION: ${{ inputs.organization }}
-        PROJECT_URL: ${{ inputs.project-url }}
+        PROJECT_NUMBER: ${{ inputs.project-number }}
         TARGET_STATUS: ${{ inputs.target-status }}
         ISSUE_ACTION: ${{ inputs.issue-action }}
         DEBUG: ${{ inputs.debug }}
