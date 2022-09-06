@@ -23,5 +23,6 @@ jobs:
         organization: tav-test-org
         project-number: 4
         target-status: "In Progress"
+        organization: tav-test-org
         debug: true
     
