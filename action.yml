@@ -6,6 +6,10 @@ inputs:
     required: true
     description: Github token with permissions to modify projects
 
+  organization:
+    required: false
+    description: The github organization (Required only if the project URL is present)
+
   issue-action:
     required: false
     description: The type of action you would like to perform (update, delete, archive, create)
@@ -30,6 +34,7 @@ runs:
     - id: github-issues-automation
       env:
         GITHUB_TOKEN: ${{ inputs.github-token }}
+        ORGANIZATION: ${{ inputs.organization }}
         PROJECT_URL: ${{ inputs.project-url }}
         TARGET_STATUS: ${{ inputs.target-status }}
         ISSUE_ACTION: ${{ inputs.issue-action }}
