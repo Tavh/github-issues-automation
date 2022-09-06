@@ -36,14 +36,14 @@ func main() {
 		logs.Debug("issue id: %s\n", issueNodeId)
 
 		client := issues.NewIssuesClient()
-		client.Execute(projectUrl, issueAction, constructIssueFieldsToNewValues(targetStatus), issueNodeId)
+		client.Execute(projectUrl, issueAction, constructFieldToNewValueMap(targetStatus), issueNodeId)
 	} else {
 		logs.Error(errors.Errorf("Action triggered from invalid event, only supports events of type '%s'\n", ISSUES_EVENT_NAME))
 	}
 }
 
-func constructIssueFieldsToNewValues(status string) map[issues.IssueField]any {
-	return map[issues.IssueField]any{
+func constructFieldToNewValueMap(status string) map[issues.Field]any {
+	return map[issues.Field]any{
 		issues.Status: status,
 	}
 }
